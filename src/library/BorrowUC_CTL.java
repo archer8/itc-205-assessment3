@@ -64,7 +64,7 @@ public class BorrowUC_CTL implements ICardReaderListener,
 		state = EBorrowState.CREATED;
 	}
     /*
-     * Overloaded constructor to pass a UI for unit testing.
+     * Overloaded constructor to pass a UI for testing.
      */
 
     public BorrowUC_CTL(ICardReader reader, IScanner scanner,
@@ -284,5 +284,10 @@ public class BorrowUC_CTL implements ICardReaderListener,
 		}
 		return bld.toString();		
 	}
+
+    public EBorrowState getState(){
+        return this.state;
+    }
+
 
 }

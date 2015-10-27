@@ -31,6 +31,7 @@ import library.interfaces.entities.EBookState;
 import library.interfaces.entities.IBook;
 import library.interfaces.entities.ILoan;
 import library.interfaces.entities.IMember;
+
 import library.interfaces.hardware.ICardReader;
 import library.interfaces.hardware.ICardReaderListener;
 import library.interfaces.hardware.IDisplay;
@@ -55,7 +56,7 @@ public class BorrowUC_CTLTest {
     private ILoanDAO loanDAO;
     private List<IBook> bookList;
     private List<ILoan> loanList;
-    private IMember borrower;
+    private IMember member;
     //private JPanel previous;
 
     private BorrowUC_CTL ctl;
@@ -71,6 +72,7 @@ public class BorrowUC_CTLTest {
         bookDAO   = mock(library.interfaces.daos.IBookDAO.class);
         memberDAO = mock(library.interfaces.daos.IMemberDAO.class);
         loanDAO   = mock(library.interfaces.daos.ILoanDAO.class);
+        member    = mock(library.interfaces.entities.IMember.class);
         ui = mock(library.BorrowUC_UI.class);
 
 
@@ -92,19 +94,41 @@ public class BorrowUC_CTLTest {
         verify(ui).displayErrorMessage("Member ID 100 not found");
     }
 
-    @Test
-    public void doesntDisplayErrorMessageIfDataIsGood() throws Exception {
 
-        when(memberDAO.getMemberByID(1)).thenReturn(mock(IMember.class));
+    // This test checks the card swiped is a valid ID number.
+    @Test
+    public void doesNotDisplayErrorMessageIfIDIsAccepted() throws Exception {
+
+        when(memberDAO.getMemberByID(1)).thenReturn(member);
         ctl.initialise();
         ctl.cardSwiped(1);
         verify(ui, never()).displayErrorMessage(anyString());
 
     }
 
+    @Test
+    public void displaysErrorWhenCardSwipedHasOverdueFees() throws Exception {
+        when(memberDAO.getMemberByID(1)).thenReturn(member);
+        when(member.hasReachedLoanLimit()).thenReturn(true);
 
-        // when + verify = mockito stuff to use most of the time.
-        //
+        ctl.initialise();
+        ctl.cardSwiped(1);
+
+        assertEquals(EBorrowState.BORROWING_RESTRICTED, ctl.getState());
+        verify(ui).displayAtLoanLimitMessage();
+
+
+        //verify(ui).displayExistingLoan("");
+
+    }
+
+    @Test
+    public void displaysWarningWhenCardSwipedHasOverdueFees() throws Exception {
+
+
+
+    }
+
 
 
 
