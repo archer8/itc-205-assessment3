@@ -248,6 +248,7 @@ public class BorrowUC_CTL implements ICardReaderListener,
 			reader.setEnabled(false);
 			scanner.setEnabled(false);
 			ui.displayErrorMessage(String.format("Member %d cannot borrow at this time.", borrower.getID()));
+            System.out.format("Member %d cannot borrow at this time.", borrower.getID());
 			break;
 			
 		default:

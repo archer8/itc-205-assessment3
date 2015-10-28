@@ -73,7 +73,7 @@ public class BorrowUC_CTLTest {
         memberDAO = mock(library.interfaces.daos.IMemberDAO.class);
         loanDAO   = mock(library.interfaces.daos.ILoanDAO.class);
         member    = mock(library.interfaces.entities.IMember.class);
-        ui = mock(library.BorrowUC_UI.class);
+        ui        = mock(library.BorrowUC_UI.class);
 
 
         ctl = new BorrowUC_CTL(reader, scanner, printer, display, bookDAO, loanDAO, memberDAO, ui);
@@ -97,7 +97,7 @@ public class BorrowUC_CTLTest {
 
     // This test checks the card swiped is a valid ID number.
     @Test
-    public void doesNotDisplayErrorMessageIfIDIsAccepted() throws Exception {
+    public void noErrorMessageIfIDIsAccepted() throws Exception {
 
         when(memberDAO.getMemberByID(1)).thenReturn(member);
         ctl.initialise();
@@ -106,26 +106,48 @@ public class BorrowUC_CTLTest {
 
     }
 
+    // no mock member provided, so this should successfully show an error:
     @Test
-    public void displaysErrorWhenCardSwipedHasOverdueFees() throws Exception {
-        when(memberDAO.getMemberByID(1)).thenReturn(member);
+    public void ErrorMessageIfIDNotFound() throws Exception {
+        ctl.initialise();
+        ctl.cardSwiped(1);
+        verify(ui).displayErrorMessage("Member ID 1 not found");
+    }
+
+    @Test
+    public void borrowingRestrictedWhenCardSwipedHasReachedLoanLimit() throws Exception {
+        when(memberDAO.getMemberByID(42)).thenReturn(member);
         when(member.hasReachedLoanLimit()).thenReturn(true);
 
         ctl.initialise();
-        ctl.cardSwiped(1);
+        ctl.cardSwiped(42);
 
-        assertEquals(EBorrowState.BORROWING_RESTRICTED, ctl.getState());
         verify(ui).displayAtLoanLimitMessage();
+        verify(scanner, atLeastOnce()).setEnabled(false);
+        assertEquals(EBorrowState.BORROWING_RESTRICTED, ctl.getState());
 
-
-        //verify(ui).displayExistingLoan("");
 
     }
 
     @Test
-    public void displaysWarningWhenCardSwipedHasOverdueFees() throws Exception {
+    public void borrowingRestrictedWhenCardSwipedHasExceededFineLimit() throws Exception {
+        when(memberDAO.getMemberByID(42)).thenReturn(member);
+        when(member.hasReachedFineLimit()).thenReturn(true);
 
+        ctl.initialise();
+        ctl.cardSwiped(42);
 
+//        System.out.println("member id: ");
+//        System.out.println(member.getID());
+
+        //String errorMessage = "Member %d cannot borrow at this time.";
+        //errorMessage = String.format(errorMessage, 1);
+
+        //verify(ui).displayErrorMessage(errorMessage);
+        //verify(scanner, atLeastOnce()).setEnabled(false);
+        assertEquals(EBorrowState.BORROWING_RESTRICTED, ctl.getState());
+
+        //System.out.println("end test");
 
     }
 
