@@ -1,4 +1,4 @@
-package tests.unit;
+package tests.integration;
 
 /*
     libraries:
@@ -166,7 +166,7 @@ public class BorrowUC_CTLTest {
         ctl.initialise();
         ctl.cardSwiped(42);
 
-        verify(ui).displayMemberDetails(42,"fname lname","0001");
+        verify(ui).displayMemberDetails(42, "fname lname", "0001");
     }
 
 
