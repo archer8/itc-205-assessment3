@@ -1,4 +1,4 @@
-package tests.daos;
+package tests.unit;
 
 import org.junit.After;
 import org.junit.Before;
@@ -7,7 +7,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Created by chris on 28/10/15.
+ * Created by chris on 27/10/15.
  */
 public class MemberMapDAOTest {
 

@@ -1,3 +1,5 @@
+package tests.unit;
+
 import library.entities.Member;
 import org.junit.Test;
 
@@ -15,7 +17,7 @@ public class MemberTest {
     public void ConstructorThrowsIfIDIsNotGreaterThanZero() throws Exception {
 
         try {
-            Member member = new Member("something", "something", "soething", "something", -22);
+            Member member = new Member("something", "something", "something", "something", -22);
         } catch (Exception e) {
             return;
         }

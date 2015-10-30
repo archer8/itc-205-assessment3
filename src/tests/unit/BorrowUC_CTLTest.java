@@ -5,9 +5,11 @@ package tests.unit;
  */
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import library.BorrowUC_UI;
+import library.entities.Member;
 import library.panels.borrow.ABorrowPanel;
 import org.junit.After;
 import org.junit.Before;
@@ -57,6 +59,7 @@ public class BorrowUC_CTLTest {
     private List<IBook> bookList;
     private List<ILoan> loanList;
     private IMember member;
+    private ILoan loan;
     //private JPanel previous;
 
     private BorrowUC_CTL ctl;
@@ -72,9 +75,11 @@ public class BorrowUC_CTLTest {
         bookDAO   = mock(library.interfaces.daos.IBookDAO.class);
         memberDAO = mock(library.interfaces.daos.IMemberDAO.class);
         loanDAO   = mock(library.interfaces.daos.ILoanDAO.class);
-        member    = mock(library.interfaces.entities.IMember.class);
+
         ui        = mock(library.BorrowUC_UI.class);
 
+        member    = mock(library.interfaces.entities.IMember.class);
+        loan  = mock(library.interfaces.entities.ILoan.class);
 
         ctl = new BorrowUC_CTL(reader, scanner, printer, display, bookDAO, loanDAO, memberDAO, ui);
 
@@ -114,6 +119,16 @@ public class BorrowUC_CTLTest {
         verify(ui).displayErrorMessage("Member ID 1 not found");
     }
 
+    // test if state is successfully changed to SCANNING_BOOKS
+    @Test
+    public void scanningBooksStateEnabledWhenCardSwipedWithNoProblems() throws Exception {
+        when(memberDAO.getMemberByID(anyInt())).thenReturn(member);
+        ctl.initialise();
+        ctl.cardSwiped(1);
+        assertEquals(EBorrowState.SCANNING_BOOKS, ctl.getState());
+    }
+
+
     @Test
     public void borrowingRestrictedWhenCardSwipedHasReachedLoanLimit() throws Exception {
         when(memberDAO.getMemberByID(42)).thenReturn(member);
@@ -137,24 +152,56 @@ public class BorrowUC_CTLTest {
         ctl.initialise();
         ctl.cardSwiped(42);
 
-//        System.out.println("member id: ");
-//        System.out.println(member.getID());
-
-        //String errorMessage = "Member %d cannot borrow at this time.";
-        //errorMessage = String.format(errorMessage, 1);
-
-        //verify(ui).displayErrorMessage(errorMessage);
-        //verify(scanner, atLeastOnce()).setEnabled(false);
         assertEquals(EBorrowState.BORROWING_RESTRICTED, ctl.getState());
-
-        //System.out.println("end test");
 
     }
 
+    @Test
+    public void displaysBorrowerDetailsAfterCardSwiped() throws Exception {
+        when(memberDAO.getMemberByID(42)).thenReturn(member);
+        when(member.getID()).thenReturn(42);
+        when(member.getFirstName()).thenReturn("fname");
+        when(member.getLastName()).thenReturn("lname");
+        when(member.getContactPhone()).thenReturn("0001");
+
+        ctl.initialise();
+        ctl.cardSwiped(42);
+
+        verify(ui).displayMemberDetails(42,"fname lname","0001");
+    }
 
 
+    @Test
+    public void displaysAnErrorMessageIfRestrictionsAfterCardSwiped() throws Exception {
+        when(memberDAO.getMemberByID(42)).thenReturn(member);
+        when(member.getID()).thenReturn(42);
+        when(member.hasFinesPayable()).thenReturn(true);
+        when(member.getFineAmount()).thenReturn(15.0f);
+
+        ctl.initialise();
+        ctl.cardSwiped(42);
+
+        verify(ui).displayOutstandingFineMessage(15.0f);
 
 
+    }
+    @Test
+    public void displaysExistingLoansAfterCardSwiped() throws Exception {
+
+        List<ILoan> list = new ArrayList<ILoan>();
+        list.add(loan);
+
+        when(memberDAO.getMemberByID(42)).thenReturn(member);
+        when(member.getID()).thenReturn(42);
+        when(member.getLoans()).thenReturn(list);
+        when(loan.toString()).thenReturn("loan info");
+
+        ctl.initialise();
+        ctl.cardSwiped(42);
+
+        verify(ui).displayExistingLoan("loan info");
+
+    }
 
 
 
