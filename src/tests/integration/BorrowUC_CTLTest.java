@@ -74,11 +74,9 @@ public class BorrowUC_CTLTest {
         bookDAO   = mock(library.interfaces.daos.IBookDAO.class);
         memberDAO = mock(library.interfaces.daos.IMemberDAO.class);
         loanDAO   = mock(library.interfaces.daos.ILoanDAO.class);
-
         ui        = mock(library.BorrowUC_UI.class);
-
         member    = mock(library.interfaces.entities.IMember.class);
-        loan  = mock(library.interfaces.entities.ILoan.class);
+        loan      = mock(library.interfaces.entities.ILoan.class);
 
         ctl = new BorrowUC_CTL(reader, scanner, printer, display, bookDAO, loanDAO, memberDAO, ui);
 

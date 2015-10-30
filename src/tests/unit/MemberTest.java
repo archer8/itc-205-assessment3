@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by chris on 10/10/15.
@@ -26,6 +26,9 @@ public class MemberTest {
 
 
 
+        //member = new Member("something", "something", "something", "something", 42);
+
+
     }
 
 
@@ -33,7 +36,7 @@ public class MemberTest {
     @Test
     public void ConstructorThrowsIfIDIsNotGreaterThanZero() throws Exception {
         try {
-            Member member = new Member("something", "something", "something", "something", -22);
+            Member borrower = new Member("something", "something", "something", "something", -22);
         } catch (Exception e) {
             return;
         }
@@ -43,7 +46,11 @@ public class MemberTest {
     @Test
     public void CheckIfMemberHasOverdueLoans() throws Exception {
 
+        //when(memberDAO.getMemberByID(42)).thenReturn(member);
 
+
+        member.addFine(5f);
+        assertTrue(member.hasFinesPayable());
 
     }
 
