@@ -13,3 +13,5 @@ hs_err_pid*
 
 #intellij idea config files
 .idea
+
+src/tests/uat/~$uat.docx
