@@ -35,11 +35,10 @@ import library.interfaces.entities.ILoan;
 import library.interfaces.entities.IMember;
 
 import library.interfaces.hardware.ICardReader;
-import library.interfaces.hardware.ICardReaderListener;
 import library.interfaces.hardware.IDisplay;
 import library.interfaces.hardware.IPrinter;
 import library.interfaces.hardware.IScanner;
-import library.interfaces.hardware.IScannerListener;
+
 
 
 /**
